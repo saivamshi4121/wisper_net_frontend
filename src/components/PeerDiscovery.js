@@ -95,7 +95,7 @@ const PeerDiscovery = ({ currentPeerId, onPeerSelect, onPeerConnect }) => {
             // Request Bluetooth device with permissive settings
             const device = await navigator.bluetooth.requestDevice({
                 acceptAllDevices: true, // Accept any Bluetooth device
-                optionalServices: ['generic_access', 'generic_attribute', 'device_information', 'a2dp', 'hfp', 'hsp']
+                optionalServices: ['generic_access', 'generic_attribute', 'device_information']
             });
 
             setDebugInfo(`Device found: ${device.name || 'Unknown'} (${device.id})`);
