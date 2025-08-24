@@ -1,0 +1,546 @@
+/* Enhanced Message Component Styles */
+.message {
+    margin: 25px 0;
+    padding: 25px 30px;
+    border-radius: 25px;
+    max-width: 90%;
+    word-wrap: break-word;
+    position: relative;
+    animation: messageSlideIn 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+    backdrop-filter: blur(15px);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
+}
+
+.message:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 12px 35px rgba(0, 0, 0, 0.3);
+    border-color: rgba(255, 255, 255, 0.25);
+}
+
+.own-message {
+    background: linear-gradient(135deg, rgba(255, 107, 107, 0.15) 0%, rgba(78, 205, 196, 0.15) 100%);
+    color: #ffffff;
+    margin-left: auto;
+    border-bottom-right-radius: 12px;
+    border: 1px solid rgba(255, 107, 107, 0.4);
+    position: relative;
+    overflow: hidden;
+}
+
+.own-message::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 3px;
+    background: linear-gradient(90deg, #ff6b6b, #4ecdc4);
+    box-shadow: 0 0 10px rgba(255, 107, 107, 0.5);
+}
+
+.own-message::after {
+    content: '💬';
+    position: absolute;
+    top: -10px;
+    right: -10px;
+    font-size: 1.3em;
+    background: linear-gradient(135deg, #ff6b6b, #4ecdc4);
+    border-radius: 50%;
+    width: 35px;
+    height: 35px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 6px 20px rgba(255, 107, 107, 0.5);
+    border: 2px solid rgba(255, 255, 255, 0.2);
+}
+
+.other-message {
+    background: linear-gradient(135deg, rgba(120, 119, 198, 0.15) 0%, rgba(255, 119, 198, 0.15) 100%);
+    color: #ffffff;
+    margin-right: auto;
+    border-bottom-left-radius: 12px;
+    border: 1px solid rgba(120, 119, 198, 0.4);
+    position: relative;
+    overflow: hidden;
+}
+
+.other-message::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 3px;
+    background: linear-gradient(90deg, #7877c6, #ff77c6);
+    box-shadow: 0 0 10px rgba(120, 119, 198, 0.5);
+}
+
+.other-message::after {
+    content: '👤';
+    position: absolute;
+    top: -10px;
+    left: -10px;
+    font-size: 1.3em;
+    background: linear-gradient(135deg, #7877c6, #ff77c6);
+    border-radius: 50%;
+    width: 35px;
+    height: 35px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 6px 20px rgba(120, 119, 198, 0.5);
+    border: 2px solid rgba(255, 255, 255, 0.2);
+}
+
+.message-header {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    margin-bottom: 15px;
+    font-size: 0.95em;
+    position: relative;
+}
+
+.sender-name {
+    font-weight: 700;
+    color: inherit;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    background: linear-gradient(135deg, #ff6b6b, #4ecdc4);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    font-size: 1.15em;
+    text-shadow: 0 0 15px rgba(255, 107, 107, 0.3);
+}
+
+.own-message .sender-name {
+    background: linear-gradient(135deg, #ffffff, #e0e0e0);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    text-shadow: 0 0 15px rgba(255, 255, 255, 0.3);
+}
+
+.timestamp {
+    color: inherit;
+    opacity: 0.8;
+    font-size: 0.9em;
+    font-weight: 500;
+    background: rgba(255, 255, 255, 0.12);
+    padding: 6px 15px;
+    border-radius: 20px;
+    border: 1px solid rgba(255, 255, 255, 0.25);
+    backdrop-filter: blur(10px);
+    transition: all 0.3s ease;
+}
+
+.timestamp:hover {
+    background: rgba(255, 255, 255, 0.18);
+    transform: translateY(-1px);
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+}
+
+.recipient-info {
+    color: rgba(78, 205, 196, 0.8);
+    font-size: 0.8em;
+    font-weight: 600;
+    margin-left: auto;
+    padding: 2px 8px;
+    background: rgba(78, 205, 196, 0.1);
+    border-radius: 10px;
+    border: 1px solid rgba(78, 205, 196, 0.2);
+}
+
+.verification-status {
+    margin-left: auto;
+    font-size: 1.4em;
+    font-weight: bold;
+    position: relative;
+    transition: all 0.3s ease;
+}
+
+.verification-status.verified {
+    color: #00b894;
+    text-shadow: 0 0 15px rgba(0, 184, 148, 0.6);
+    animation: pulse 2.5s infinite;
+    filter: drop-shadow(0 0 8px rgba(0, 184, 148, 0.4));
+}
+
+@keyframes pulse {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.15); }
+}
+
+.message-content {
+    line-height: 1.7;
+    font-size: 1.1em;
+    font-weight: 500;
+    position: relative;
+    z-index: 1;
+    margin-bottom: 5px;
+}
+
+.block-details {
+    margin-top: 25px;
+    padding-top: 25px;
+    border-top: 2px solid rgba(255, 255, 255, 0.25);
+    font-size: 0.9em;
+    background: rgba(0, 0, 0, 0.25);
+    border-radius: 20px;
+    padding: 20px;
+    backdrop-filter: blur(15px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.own-message .block-details {
+    border-top-color: rgba(255, 107, 107, 0.4);
+    background: rgba(255, 107, 107, 0.15);
+    border-color: rgba(255, 107, 107, 0.2);
+}
+
+.detail-row {
+    display: flex;
+    justify-content: space-between;
+    margin: 12px 0;
+    align-items: center;
+    padding: 12px 18px;
+    background: rgba(255, 255, 255, 0.08);
+    border-radius: 15px;
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    transition: all 0.4s ease;
+}
+
+.detail-row:hover {
+    background: rgba(255, 255, 255, 0.12);
+    transform: translateX(8px);
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.2);
+}
+
+.detail-label {
+    font-weight: 700;
+    color: inherit;
+    opacity: 0.9;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    font-size: 0.85em;
+}
+
+.detail-value {
+    font-family: 'JetBrains Mono', 'Courier New', monospace;
+    background: rgba(255, 255, 255, 0.12);
+    padding: 8px 16px;
+    border-radius: 12px;
+    font-size: 0.95em;
+    border: 1px solid rgba(255, 255, 255, 0.25);
+    position: relative;
+    overflow: hidden;
+    backdrop-filter: blur(10px);
+    transition: all 0.3s ease;
+}
+
+.detail-value::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.15), transparent);
+    transition: left 0.6s;
+}
+
+.detail-value:hover::before {
+    left: 100%;
+}
+
+.detail-value:hover {
+    transform: scale(1.02);
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+}
+
+.own-message .detail-value {
+    background: rgba(255, 255, 255, 0.18);
+    border-color: rgba(255, 255, 255, 0.35);
+}
+
+.detail-value.hash,
+.detail-value.signature {
+    color: #4ecdc4;
+    font-size: 0.85em;
+    font-weight: 600;
+    background: rgba(78, 205, 196, 0.15);
+    border-color: rgba(78, 205, 196, 0.4);
+    text-shadow: 0 0 10px rgba(78, 205, 196, 0.3);
+}
+
+/* Enhanced animations */
+@keyframes messageSlideIn {
+    from {
+        opacity: 0;
+        transform: translateY(40px) scale(0.95);
+        filter: blur(8px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+        filter: blur(0);
+    }
+}
+
+/* Message typing indicator */
+.message.typing::after {
+    content: '';
+    position: absolute;
+    bottom: 20px;
+    left: 30px;
+    width: 25px;
+    height: 25px;
+    background: linear-gradient(135deg, #ff6b6b, #4ecdc4);
+    border-radius: 50%;
+    animation: typing 1.6s infinite;
+    box-shadow: 0 0 15px rgba(255, 107, 107, 0.4);
+}
+
+@keyframes typing {
+    0%, 60%, 100% { transform: translateY(0); }
+    30% { transform: translateY(-12px); }
+}
+
+/* Responsive design - Enhanced */
+@media (max-width: 768px) {
+    .message {
+        max-width: 95%;
+        padding: 22px 25px;
+        margin: 20px 0;
+        border-radius: 22px;
+    }
+    
+    .message-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 10px;
+    }
+    
+    .verification-status {
+        margin-left: 0;
+        align-self: flex-end;
+        font-size: 1.3em;
+    }
+    
+    .sender-name {
+        font-size: 1.1em;
+    }
+    
+    .timestamp {
+        font-size: 0.85em;
+        padding: 5px 12px;
+    }
+    
+    .block-details {
+        padding: 18px;
+        margin-top: 20px;
+        border-radius: 18px;
+    }
+    
+    .detail-row {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 8px;
+        padding: 15px;
+    }
+    
+    .detail-value {
+        width: 100%;
+        text-align: left;
+        word-break: break-all;
+        font-size: 0.9em;
+    }
+    
+    .own-message::after,
+    .other-message::after {
+        width: 30px;
+        height: 30px;
+        font-size: 1.1em;
+        top: -8px;
+        right: -8px;
+    }
+    
+    .other-message::after {
+        left: -8px;
+    }
+}
+
+@media (max-width: 480px) {
+    .message {
+        padding: 20px 22px;
+        border-radius: 20px;
+        margin: 18px 0;
+    }
+    
+    .message-content {
+        font-size: 1.05em;
+        line-height: 1.6;
+    }
+    
+    .block-details {
+        padding: 15px;
+        border-radius: 16px;
+        font-size: 0.85em;
+    }
+    
+    .detail-row {
+        padding: 12px;
+        border-radius: 12px;
+    }
+    
+    .detail-value {
+        padding: 6px 12px;
+        font-size: 0.85em;
+    }
+    
+    .sender-name {
+        font-size: 1em;
+    }
+    
+    .timestamp {
+        font-size: 0.8em;
+        padding: 4px 10px;
+    }
+}
+
+/* Special effects for different message types */
+.message.important {
+    border: 2px solid #ff6b6b;
+    box-shadow: 0 0 25px rgba(255, 107, 107, 0.4);
+    animation: importantPulse 2s infinite;
+}
+
+.message.important::before {
+    height: 4px;
+    background: linear-gradient(90deg, #ff6b6b, #ff5252, #ff6b6b);
+    animation: shimmer 2.5s infinite;
+    background-size: 200% 100%;
+}
+
+@keyframes importantPulse {
+    0%, 100% { 
+        box-shadow: 0 0 25px rgba(255, 107, 107, 0.4);
+    }
+    50% { 
+        box-shadow: 0 0 35px rgba(255, 107, 107, 0.6), 0 0 45px rgba(255, 107, 107, 0.3);
+    }
+}
+
+@keyframes shimmer {
+    0% { background-position: -200% center; }
+    100% { background-position: 200% center; }
+}
+
+/* Hover effects */
+.message:hover .detail-value {
+    transform: scale(1.03);
+}
+
+.message:hover .sender-name {
+    text-shadow: 0 0 15px currentColor;
+}
+
+.message:hover .timestamp {
+    transform: translateY(-2px);
+}
+
+/* Focus states for accessibility */
+.message:focus-within {
+    outline: 2px solid #4ecdc4;
+    outline-offset: 3px;
+}
+
+/* Dark mode optimizations */
+@media (prefers-color-scheme: dark) {
+    .message {
+        border-color: rgba(255, 255, 255, 0.2);
+    }
+    
+    .detail-value {
+        background: rgba(255, 255, 255, 0.1);
+    }
+    
+    .block-details {
+        background: rgba(0, 0, 0, 0.3);
+    }
+}
+
+/* Message status indicators */
+.message.sending {
+    opacity: 0.7;
+    animation: sendingPulse 1.5s infinite;
+}
+
+@keyframes sendingPulse {
+    0%, 100% { opacity: 0.7; }
+    50% { opacity: 0.9; }
+}
+
+.message.sent {
+    border-color: rgba(78, 205, 196, 0.5);
+    box-shadow: 0 8px 25px rgba(78, 205, 196, 0.2);
+}
+
+.message.delivered {
+    border-color: rgba(120, 119, 198, 0.5);
+    box-shadow: 0 8px 25px rgba(120, 119, 198, 0.2);
+}
+
+/* Enhanced message transitions */
+.message {
+    transform-origin: center bottom;
+}
+
+.message:first-child {
+    animation-delay: 0.1s;
+}
+
+.message:nth-child(2) {
+    animation-delay: 0.2s;
+}
+
+.message:nth-child(3) {
+    animation-delay: 0.3s;
+}
+
+/* Message group styling */
+.message + .message {
+    margin-top: 15px;
+}
+
+.message + .message.own-message {
+    margin-top: 20px;
+}
+
+/* Enhanced verification status */
+.verification-status.verified::before {
+    content: '✓';
+    position: absolute;
+    top: -2px;
+    left: -2px;
+    width: 100%;
+    height: 100%;
+    background: radial-gradient(circle, rgba(0, 184, 148, 0.2) 0%, transparent 70%);
+    border-radius: 50%;
+    animation: verificationGlow 2s infinite;
+}
+
+@keyframes verificationGlow {
+    0%, 100% { 
+        transform: scale(1);
+        opacity: 0.2;
+    }
+    50% { 
+        transform: scale(1.2);
+        opacity: 0.4;
+    }
+}
