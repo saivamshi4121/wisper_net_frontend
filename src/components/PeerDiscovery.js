@@ -95,20 +95,92 @@ const PeerDiscovery = ({ currentPeerId, onPeerSelect, onPeerConnect }) => {
             // Request Bluetooth device with permissive settings
             const device = await navigator.bluetooth.requestDevice({
                 acceptAllDevices: true, // Accept any Bluetooth device
-                optionalServices: ['generic_access', 'generic_attribute', 'device_information']
+                optionalServices: ['generic_access', 'generic_attribute', 'device_information', 'a2dp', 'hfp', 'hsp']
             });
 
             setDebugInfo(`Device found: ${device.name || 'Unknown'} (${device.id})`);
 
+            // Try to get more device information by connecting briefly
+            let deviceName = device.name;
+            let deviceType = 'Unknown Device';
+            
+            if (!deviceName || deviceName === 'Unknown') {
+                try {
+                    // Try to connect briefly to get device information
+                    const gatt = await device.gatt.connect();
+                    setDebugInfo(`Connected to ${device.id} to get device info...`);
+                    
+                    // Try to get device information service
+                    try {
+                        const deviceInfoService = await gatt.getPrimaryService('device_information');
+                        const manufacturerChar = await deviceInfoService.getCharacteristic('manufacturer_name_string');
+                        const manufacturer = await manufacturerChar.readValue();
+                        const manufacturerText = new TextDecoder().decode(manufacturer.value);
+                        
+                        if (manufacturerText) {
+                            deviceType = `${manufacturerText} Device`;
+                        }
+                    } catch (e) {
+                        // Device information service not available
+                    }
+                    
+                    // Try to get generic access service for device name
+                    try {
+                        const genericAccessService = await gatt.getPrimaryService('generic_access');
+                        const deviceNameChar = await genericAccessService.getCharacteristic('device_name');
+                        const deviceNameValue = await deviceNameChar.readValue();
+                        const retrievedName = new TextDecoder().decode(deviceNameValue.value);
+                        
+                        if (retrievedName && retrievedName.trim()) {
+                            deviceName = retrievedName.trim();
+                        }
+                    } catch (e) {
+                        // Generic access service not available
+                    }
+                    
+                    // Disconnect after getting info
+                    await gatt.disconnect();
+                    setDebugInfo(`Disconnected from ${device.id} after getting device info`);
+                    
+                } catch (connectError) {
+                    setDebugInfo(`Could not connect to ${device.id} for device info: ${connectError.message}`);
+                }
+            }
+
+            // Generate a better device name if still unknown
+            if (!deviceName || deviceName === 'Unknown') {
+                // Try to identify device type from MAC address patterns
+                const mac = device.id;
+                if (mac.includes(':')) {
+                    const macParts = mac.split(':');
+                    const firstByte = parseInt(macParts[0], 16);
+                    
+                    // Common device type identification from MAC address
+                    if (firstByte >= 0x00 && firstByte <= 0x1F) deviceType = 'Apple Device';
+                    else if (firstByte >= 0x20 && firstByte <= 0x3F) deviceType = 'Samsung Device';
+                    else if (firstByte >= 0x40 && firstByte <= 0x5F) deviceType = 'Xiaomi Device';
+                    else if (firstByte >= 0x60 && firstByte <= 0x7F) deviceType = 'Huawei Device';
+                    else if (firstByte >= 0x80 && firstByte <= 0x9F) deviceType = 'OnePlus Device';
+                    else if (firstByte >= 0xA0 && firstByte <= 0xBF) deviceType = 'Google Device';
+                    else if (firstByte >= 0xC0 && firstByte <= 0xDF) deviceType = 'Sony Device';
+                    else if (firstByte >= 0xE0 && firstByte <= 0xFF) deviceType = 'Other Device';
+                    
+                    deviceName = `${deviceType} (${mac})`;
+                } else {
+                    deviceName = `Bluetooth Device (${device.id})`;
+                }
+            }
+
             // Add the discovered device to peers list
             const newPeer = {
                 id: device.id || `bt_${Date.now()}`,
-                deviceName: device.name || 'Unknown Bluetooth Device',
+                deviceName: deviceName,
                 location: 'Bluetooth Range',
                 connectedAt: new Date().toISOString(),
                 lastSeen: new Date().toISOString(),
                 status: 'discovered',
-                bluetoothDevice: device
+                bluetoothDevice: device,
+                deviceType: deviceType
             };
 
             setPeers(prevPeers => {
@@ -291,6 +363,74 @@ const PeerDiscovery = ({ currentPeerId, onPeerSelect, onPeerConnect }) => {
         }, 100);
     };
 
+    // Refresh device information for a specific peer
+    const refreshDeviceInfo = async (peer) => {
+        if (peer.isDemo || !peer.bluetoothDevice) {
+            setDebugInfo('Cannot refresh info for demo or invalid devices');
+            return;
+        }
+
+        try {
+            setDebugInfo(`Refreshing device info for ${peer.deviceName}...`);
+            
+            // Try to connect and get updated device information
+            const gatt = await peer.bluetoothDevice.gatt.connect();
+            
+            let deviceName = peer.deviceName;
+            let deviceType = peer.deviceType || 'Unknown Device';
+            
+            // Try to get device information service
+            try {
+                const deviceInfoService = await gatt.getPrimaryService('device_information');
+                const manufacturerChar = await deviceInfoService.getCharacteristic('manufacturer_name_string');
+                const manufacturer = await manufacturerChar.readValue();
+                const manufacturerText = new TextDecoder().decode(manufacturer.value);
+                
+                if (manufacturerText) {
+                    deviceType = `${manufacturerText} Device`;
+                }
+            } catch (e) {
+                // Device information service not available
+            }
+            
+            // Try to get generic access service for device name
+            try {
+                const genericAccessService = await gatt.getPrimaryService('generic_access');
+                const deviceNameChar = await genericAccessService.getCharacteristic('device_name');
+                const deviceNameValue = await deviceNameChar.readValue();
+                const retrievedName = new TextDecoder().decode(deviceNameValue.value);
+                
+                if (retrievedName && retrievedName.trim()) {
+                    deviceName = retrievedName.trim();
+                }
+            } catch (e) {
+                // Generic access service not available
+            }
+            
+            // Disconnect after getting info
+            await gatt.disconnect();
+            
+            // Update peer with new information
+            const updatedPeer = { 
+                ...peer, 
+                deviceName: deviceName,
+                deviceType: deviceType
+            };
+            
+            setPeers(prevPeers => 
+                prevPeers.map(p => 
+                    p.id === peer.id ? updatedPeer : p
+                )
+            );
+            
+            setDebugInfo(`Successfully refreshed device info: ${deviceName}`);
+            
+        } catch (error) {
+            setDebugInfo(`Failed to refresh device info: ${error.message}`);
+            console.error('Device info refresh error:', error);
+        }
+    };
+
     // Scroll to bottom to show all content
     const scrollToBottom = () => {
         const element = document.querySelector('.peer-discovery');
@@ -337,6 +477,23 @@ const PeerDiscovery = ({ currentPeerId, onPeerSelect, onPeerConnect }) => {
                         onClick={enableDemoMode}
                     >
                         🎭 Demo Mode
+                    </button>
+                    <button 
+                        className="refresh-all-button"
+                        onClick={() => {
+                            if (peers.length > 0 && !demoMode) {
+                                peers.forEach(peer => {
+                                    if (!peer.isDemo) {
+                                        refreshDeviceInfo(peer);
+                                    }
+                                });
+                                setDebugInfo('Refreshing all device information...');
+                            }
+                        }}
+                        disabled={peers.length === 0 || demoMode}
+                        title="Refresh all device information"
+                    >
+                        🔄 Refresh All
                     </button>
                 </div>
             </div>
@@ -399,6 +556,8 @@ const PeerDiscovery = ({ currentPeerId, onPeerSelect, onPeerConnect }) => {
                         <li>Use Chrome/Edge browser (Firefox doesn't support Web Bluetooth)</li>
                         <li>Allow Bluetooth permissions when prompted</li>
                         <li>Click "Demo Mode" to simulate Bluetooth functionality</li>
+                        <li>Use 🔄 Refresh button to get better device names</li>
+                        <li>Click "🔄 Refresh All" to update all device information</li>
                     </ul>
                 </div>
             </div>
@@ -446,6 +605,9 @@ const PeerDiscovery = ({ currentPeerId, onPeerSelect, onPeerConnect }) => {
                                     </div>
                                     <div className="peer-id">{peer.id}</div>
                                     <div className="peer-location">{peer.location}</div>
+                                    {peer.deviceType && !peer.isDemo && (
+                                        <div className="peer-type">{peer.deviceType}</div>
+                                    )}
                                 </div>
                             </div>
                             
@@ -465,15 +627,29 @@ const PeerDiscovery = ({ currentPeerId, onPeerSelect, onPeerConnect }) => {
                                             Disconnect
                                         </button>
                                     ) : (
-                                        <button 
-                                            className="connect-btn"
-                                            onClick={(e) => {
-                                                e.stopPropagation();
-                                                connectToPeer(peer);
-                                            }}
-                                        >
-                                            Connect
-                                        </button>
+                                        <>
+                                            <button 
+                                                className="connect-btn"
+                                                onClick={(e) => {
+                                                    e.stopPropagation();
+                                                    connectToPeer(peer);
+                                                }}
+                                            >
+                                                Connect
+                                            </button>
+                                            {!peer.isDemo && (
+                                                <button 
+                                                    className="refresh-btn"
+                                                    onClick={(e) => {
+                                                        e.stopPropagation();
+                                                        refreshDeviceInfo(peer);
+                                                    }}
+                                                    title="Refresh device information"
+                                                >
+                                                    🔄
+                                                </button>
+                                            )}
+                                        </>
                                     )}
                                 </div>
                             </div>

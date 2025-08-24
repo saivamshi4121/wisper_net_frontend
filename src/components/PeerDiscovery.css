@@ -139,9 +139,35 @@
     color: #9c27b0;
 }
 
-.demo-button:hover:not(:disabled) {
+.demo-button:hover {
     background: rgba(156, 39, 176, 0.3);
-    box-shadow: 0 8px 20px rgba(156, 39, 176, 0.2);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(156, 39, 176, 0.3);
+}
+
+.refresh-all-button {
+    background: rgba(255, 193, 7, 0.1);
+    border: 1px solid rgba(255, 193, 7, 0.2);
+    border-radius: 15px;
+    padding: 10px 20px;
+    color: rgba(255, 193, 7, 0.9);
+    font-size: 0.9em;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    backdrop-filter: blur(10px);
+}
+
+.refresh-all-button:hover:not(:disabled) {
+    background: rgba(255, 193, 7, 0.2);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(255, 193, 7, 0.2);
+}
+
+.refresh-all-button:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    transform: none;
 }
 
 @keyframes pulse {
@@ -527,6 +553,19 @@
     font-size: 0.8em;
 }
 
+.peer-type {
+    color: rgba(255, 193, 7, 0.8);
+    font-size: 0.75em;
+    font-weight: 600;
+    font-style: italic;
+    background: rgba(255, 193, 7, 0.1);
+    padding: 2px 8px;
+    border-radius: 8px;
+    border: 1px solid rgba(255, 193, 7, 0.2);
+    display: inline-block;
+    margin-top: 2px;
+}
+
 .peer-status {
     display: flex;
     flex-direction: column;
@@ -599,6 +638,34 @@
     background: rgba(255, 107, 107, 0.3);
     transform: translateY(-2px);
     box-shadow: 0 6px 20px rgba(255, 107, 107, 0.2);
+}
+
+.refresh-btn {
+    padding: 8px 12px;
+    border-radius: 12px;
+    border: none;
+    font-size: 1em;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    backdrop-filter: blur(10px);
+    background: rgba(255, 193, 7, 0.2);
+    color: #ffc107;
+    border: 1px solid rgba(255, 193, 7, 0.3);
+    min-width: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.refresh-btn:hover {
+    background: rgba(255, 193, 7, 0.3);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(255, 193, 7, 0.2);
+    transform: rotate(180deg);
+}
+
+.refresh-btn:active {
+    transform: scale(0.95);
 }
 
 .selected-peer-info {
